@@ -1,5 +1,9 @@
 package main
 
+import (
+	tea "github.com/charmbracelet/bubbletea"
+)
+
 type articles struct {
 	article []article
 	cursor  int
@@ -18,4 +22,9 @@ func initialModel() articles {
 		}},
 		cursor: 0,
 	}
+}
+
+func (m articles) Init() tea.Cmd {
+	// Just return `nil`, which means "no I/O right now, please."
+	return nil
 }
