@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -63,5 +65,17 @@ func (m articles) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m articles) View() string {
-	return "hoho"
+	s := "Today's current Affairs\n"
+	footer := "\nj/k UP/DOWN  ctrl+c QUIT"
+	for i, v := range m.article {
+		cursor := "  "
+		if m.cursor == i {
+			cursor = "->"
+		}
+		index := i + 1
+		headline := v.headline
+		s += fmt.Sprintf("%s %d.%s\n", cursor, index, headline)
+	}
+	s += footer
+	return s
 }
