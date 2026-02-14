@@ -5,5 +5,16 @@ package main
 // You may also need to run `go mod tidy` to download bubbletea and its
 // dependencies.
 import (
+	"fmt"
+	"os"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
+
+func main() {
+	p := tea.NewProgram(initialModel())
+	if _, err := p.Run(); err != nil {
+		fmt.Printf("Ohhoo there has been an Error: %v", err)
+		os.Exit(1)
+	}
+}
