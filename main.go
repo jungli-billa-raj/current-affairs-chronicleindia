@@ -6,7 +6,8 @@ package main
 // dependencies.
 import (
 	"fmt"
-	"os"
+	"log"
+	// "os"
 	// tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -16,5 +17,11 @@ func main() {
 	// 	fmt.Printf("Ohhoo there has been an Error: %v", err)
 	// 	os.Exit(1)
 	// }
-
+	month := "january"
+	year := 2025
+	articles, err := scrape(month, year)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Print(articles)
 }

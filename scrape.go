@@ -13,7 +13,7 @@ import (
 
 func scrape(month string, year int) (articles, error) {
 	baseURL := "https://www.chronicleindia.in/current-affairs/monthly/"
-	baseURL += fmt.Sprintf("%s-%s", month, year)
+	baseURL += fmt.Sprintf("%s-%d", month, year)
 
 	// Request the HTML Page
 	res, err := http.Get(baseURL)
@@ -42,7 +42,7 @@ func scrape(month string, year int) (articles, error) {
 		href, _ := s.Attr("href")
 		scrapedArticles.article = append(scrapedArticles.article, article{
 			url:      href,
-			headline: fmt.Sprintf("https://www.chronicleindia.in/current-affairs/%s", text),
+			headline: "https://www.chronicleindia.in/current-affairs/" + text,
 		})
 		fmt.Println(text, href)
 	})
