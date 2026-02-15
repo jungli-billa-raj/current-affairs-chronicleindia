@@ -7,14 +7,14 @@ package main
 import (
 	"fmt"
 	"os"
-
-	tea "github.com/charmbracelet/bubbletea"
+	// tea "github.com/charmbracelet/bubbletea"
 )
 
 func main() {
-	p := tea.NewProgram(initialModel())
-	if _, err := p.Run(); err != nil {
-		fmt.Printf("Ohhoo there has been an Error: %v", err)
-		os.Exit(1)
-	}
+	// p := tea.NewProgram(initialModel())
+	// if _, err := p.Run(); err != nil {
+	// 	fmt.Printf("Ohhoo there has been an Error: %v", err)
+	// 	os.Exit(1)
+	// }
+
 }
