@@ -11,7 +11,7 @@ import (
 
 // https://www.chronicleindia.in/current-affairs/monthly/february-2025
 
-func scrape(month string, year int) (articles, error) {
+func scrape(month string, year int) ([]article, error) {
 	baseURL := "https://www.chronicleindia.in/current-affairs/monthly/"
 	baseURL += fmt.Sprintf("%s-%d", month, year)
 
@@ -32,22 +32,19 @@ func scrape(month string, year int) (articles, error) {
 		log.Fatal(err)
 	}
 
-	scrapedArticles := articles{
-		article: []article{},
-		cursor:  0,
-	}
+	articles := []article{}
 
 	doc.Find("h2.heading > a").Each(func(i int, s *goquery.Selection) {
 		text := strings.TrimSpace(s.Text())
 		href, _ := s.Attr("href")
-		scrapedArticles.article = append(scrapedArticles.article, article{
+
+		articles = append(articles, article{
 			url:      "https://www.chronicleindia.in" + href,
 			headline: text,
 		})
-		fmt.Println(text, href)
 	})
 	// Rule to remember
 	// Classes over structure. Always.
 
-	return scrapedArticles, nil
+	return articles, nil
 }
