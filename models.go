@@ -2,9 +2,15 @@ package main
 
 import (
 	"fmt"
+	"log"
 
+	list "github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 )
+
+type model struct {
+	list list.Model
+}
 
 type articles struct {
 	article []article
@@ -16,26 +22,14 @@ type article struct {
 	headline string
 }
 
-func initialModel() articles {
-	return articles{
-		article: []article{{
-			url:      "www.google.com",
-			headline: "I'm feeling lucky",
-		}, {
-			url:      "www.youtube.com",
-			headline: "Let's watch some videos",
-		}, {
-			url:      "mail.google.com",
-			headline: "Check your emails regularly!!",
-		}, {
-			url:      "www.wikipedia.com",
-			headline: "Let's learn something",
-		}, {
-			url:      "www.learnspanish.com",
-			headline: "learn some spanish.",
-		}},
-		cursor: 0,
+func initialModel(month string, year int) articles {
+	articles, err := scrape(month, year)
+	if err != nil {
+		log.Fatal(err)
 	}
+	listModel := model{}
+	returnModel := append(listModel.list.Items(), articles)
+	return returnModel
 }
 
 func (m articles) Init() tea.Cmd {

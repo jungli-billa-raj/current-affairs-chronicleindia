@@ -6,19 +6,19 @@ package main
 // dependencies.
 import (
 	"fmt"
-	"log"
+	// "log"
 	"os"
 	"strings"
 
+	tea "github.com/charmbracelet/bubbletea"
 	flag "github.com/spf13/pflag"
-	// tea "github.com/charmbracelet/bubbletea"
 )
 
 func main() {
 	month := flag.StringP("month", "m", "", "Month Name. (january/jan, short name allowed)")
 	year := flag.IntP("year", "y", 2026, "Year 2022 to 2026")
 	flag.Parse()
-	if *month == "" {
+	if *month == "" || (*year < 2022 || *year > 2026) {
 		flag.Usage() // Prints the help menu automatically
 		fmt.Println("Note: --month or -m is required.")
 		os.Exit(1) // Exit with an error code
@@ -44,14 +44,15 @@ func main() {
 		flag.Usage()
 		os.Exit(1)
 	}
-	// p := tea.NewProgram(initialModel())
-	// if _, err := p.Run(); err != nil {
-	// 	fmt.Printf("Ohhoo there has been an Error: %v", err)
-	// 	os.Exit(1)
-	// }
-	articles, err := scrape(fullMonth, *year)
-	if err != nil {
-		log.Fatal(err)
+	p := tea.NewProgram(initialModel(fullMonth, *year), tea.WithAltScreen())
+	if _, err := p.Run(); err != nil {
+		fmt.Printf("Ohhoo there has been an Error: %v", err)
+		os.Exit(1)
 	}
-	fmt.Print(articles)
 }
+
+// articles, err := scrape(fullMonth, *year)
+// if err != nil {
+// 	log.Fatal(err)
+// }
+// fmt.Print(articles)
