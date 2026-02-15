@@ -41,8 +41,8 @@ func scrape(month string, year int) (articles, error) {
 		text := strings.TrimSpace(s.Text())
 		href, _ := s.Attr("href")
 		scrapedArticles.article = append(scrapedArticles.article, article{
-			url:      href,
-			headline: "https://www.chronicleindia.in/current-affairs/" + text,
+			url:      "https://www.chronicleindia.in" + href,
+			headline: text,
 		})
 		fmt.Println(text, href)
 	})
