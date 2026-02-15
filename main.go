@@ -6,26 +6,50 @@ package main
 // dependencies.
 import (
 	"fmt"
-	flag "github.com/spf13/pflag"
 	"log"
 	"os"
+	"strings"
+
+	flag "github.com/spf13/pflag"
 	// tea "github.com/charmbracelet/bubbletea"
 )
 
 func main() {
-	month := flag.StringP("month", "m", "", "Month Name")
+	month := flag.StringP("month", "m", "", "Month Name. (january/jan, short name allowed)")
 	year := flag.IntP("year", "y", 2026, "Year 2022 to 2026")
+	flag.Parse()
 	if *month == "" {
-		fmt.Println("Error: --month or -m is required.")
 		flag.Usage() // Prints the help menu automatically
-		os.Exit(1)   // Exit with an error code
+		fmt.Println("Note: --month or -m is required.")
+		os.Exit(1) // Exit with an error code
+	}
+	monthMap := map[string]string{
+		"jan": "january", "january": "january",
+		"feb": "february", "february": "february",
+		"mar": "march", "march": "march",
+		"apr": "april", "april": "april",
+		"may": "may",
+		"jun": "june", "june": "june",
+		"jul": "july", "july": "july",
+		"aug": "august", "august": "august",
+		"sep": "september", "september": "september",
+		"oct": "october", "october": "october",
+		"nov": "november", "november": "november",
+		"dec": "december", "december": "december",
+	}
+
+	m := strings.ToLower(*month)
+	fullMonth, ok := monthMap[m]
+	if !ok {
+		flag.Usage()
+		os.Exit(1)
 	}
 	// p := tea.NewProgram(initialModel())
 	// if _, err := p.Run(); err != nil {
 	// 	fmt.Printf("Ohhoo there has been an Error: %v", err)
 	// 	os.Exit(1)
 	// }
-	articles, err := scrape(*month, *year)
+	articles, err := scrape(fullMonth, *year)
 	if err != nil {
 		log.Fatal(err)
 	}
