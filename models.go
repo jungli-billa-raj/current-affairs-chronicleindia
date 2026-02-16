@@ -48,6 +48,7 @@ func initialModel(month string, year int) model {
 	}
 	l := list.New(items, list.NewDefaultDelegate(), 0, 0)
 	l.Title = "Current Affairs"
+	l.DisableQuitKeybindings()
 
 	vp := viewport.New(0, 0)
 	vp.SetContent("Loading Article.....")
@@ -71,8 +72,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "esc":
 			if m.view == articleView {
 				m.view = listView
-				return m, nil
-			}
+			} // I had put return m, nil line iside the if block. This propagated the message to listView and closed the app. Lesson Learnt
+			return m, nil
 		case "enter":
 			if m.view == listView {
 				m.view = articleView
@@ -85,11 +86,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.viewport.Height = msg.Height
 	}
 
-	if m.view == articleView {
+	switch m.view {
+	case articleView:
 		m.viewport, cmd = m.viewport.Update(msg)
-	} else if m.view == listView {
-		m.list, _ = m.list.Update(msg)
+	case listView:
+		m.list, cmd = m.list.Update(msg)
 	}
+
 	return m, cmd
 }
 
