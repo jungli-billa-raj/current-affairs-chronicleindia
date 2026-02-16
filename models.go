@@ -5,17 +5,27 @@ import (
 	"log"
 
 	list "github.com/charmbracelet/bubbles/list"
+	viewport "github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 type model struct {
-	list list.Model
+	list     list.Model
+	viewport viewport.Model
+	view     view
 }
 
 type article struct {
 	url      string
 	headline string
 }
+
+type view int
+
+const (
+	listView view = iota
+	articleView
+)
 
 // This is required because bubbles/list expects items implementing list.Item.
 type item string
@@ -27,7 +37,7 @@ func (i item) FilterValue() string { return string(i) }
 //
 
 func initialModel(month string, year int) model {
-	articles, err := scrape(month, year)
+	articles, err := scrapeArticlePage(month, year)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -39,7 +49,10 @@ func initialModel(month string, year int) model {
 	l := list.New(items, list.NewDefaultDelegate(), 0, 0)
 	l.Title = "Current Affairs"
 
-	return model{list: l}
+	vp := viewport.New(0, 0)
+	vp.SetContent("Loading Article.....")
+
+	return model{list: l, viewport: vp, view: listView}
 }
 
 func (m model) Init() tea.Cmd {
@@ -55,15 +68,35 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m, tea.Quit
+		case "esc":
+			if m.view == articleView {
+				m.view = listView
+				return m, nil
+			}
+		case "enter":
+			if m.view == listView {
+				m.view = articleView
+				m.viewport.SetContent("Article Text here:")
+			}
 		}
 	case tea.WindowSizeMsg:
 		m.list.SetSize(msg.Width, msg.Height)
+		m.viewport.Width = msg.Width // so I'm assuming that msg contains the current Width and Height of the terminal
+		m.viewport.Height = msg.Height
 	}
 
-	m.list, cmd = m.list.Update(msg)
+	if m.view == articleView {
+		m.viewport, cmd = m.viewport.Update(msg)
+	} else if m.view == listView {
+		m.list, _ = m.list.Update(msg)
+	}
 	return m, cmd
 }
 
 func (m model) View() string {
-	return m.list.View()
+	if m.view == articleView {
+		return m.viewport.View()
+	} else {
+		return m.list.View()
+	}
 }

@@ -11,7 +11,7 @@ import (
 
 // https://www.chronicleindia.in/current-affairs/monthly/february-2025
 
-func scrape(month string, year int) ([]article, error) {
+func scrapeArticlePage(month string, year int) ([]article, error) {
 	baseURL := "https://www.chronicleindia.in/current-affairs/monthly/"
 	baseURL += fmt.Sprintf("%s-%d", month, year)
 
@@ -48,3 +48,5 @@ func scrape(month string, year int) ([]article, error) {
 
 	return articles, nil
 }
+
+// func scrapeArticleDetails(url string)
