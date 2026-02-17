@@ -5,7 +5,6 @@ A minimal, beautiful Terminal User Interface (TUI) application built with **Go +
 
 Built for speed, simplicity, and a clean reading experience.
 
-NOTE: "enter" key functionality has not been added yet to view the article. Working on it
 ---
 
 ## ✨ Features

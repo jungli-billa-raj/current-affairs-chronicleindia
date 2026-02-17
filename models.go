@@ -7,6 +7,7 @@ import (
 	list "github.com/charmbracelet/bubbles/list"
 	viewport "github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type model struct {
@@ -55,7 +56,8 @@ func initialModel(month string, year int) model {
 	l := list.New(items, list.NewDefaultDelegate(), 0, 0)
 	l.Title = "Current Affairs"
 	l.DisableQuitKeybindings()
-	vp := viewport.New(0, 0)
+	vp := viewport.New(5, 5)
+	vp.Style = lipgloss.NewStyle().Border(lipgloss.NormalBorder())
 	vp.SetContent("Loading Article.....")
 
 	return model{list: l, viewport: vp, view: listView}
@@ -86,6 +88,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				// if article exists in cache Set Content
 				cachedText, exists := cache[selectedItem.id]
 				if exists {
+					// m.viewport.Style.Align(5)
 					m.viewport.SetContent(cachedText)
 					return m, nil
 				}
