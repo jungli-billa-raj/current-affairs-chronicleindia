@@ -49,4 +49,44 @@ func scrapeArticlePage(month string, year int) ([]article, error) {
 	return articles, nil
 }
 
-// func scrapeArticleDetails(url string)
+type articleDetail struct {
+	Title  string
+	Intro  string
+	Points []string
+}
+
+func scrapeArticleDetails(url string) (articleDetail, error) {
+	// Request the HTML Page
+	res, err := http.Get(url)
+	if err != nil {
+		// log.Fatal(err)
+		return articleDetail{}, err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		// log.Fatalf("Status Code error: %d %s", res.StatusCode, res.Status)
+		return articleDetail{}, err
+	}
+
+	// Load the HTML document
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return articleDetail{}, err
+	}
+
+	detail := articleDetail{}
+
+	root := doc.Find("div.new-border")
+
+	detail.Title = strings.TrimSpace(root.Find("h1").First().Text())
+	detail.Intro = strings.TrimSpace(root.Find("h2").First().Text())
+
+	root.Find("ul li").Each(func(i int, s *goquery.Selection) {
+		point := strings.TrimSpace(s.Text())
+		if point != "" {
+			detail.Points = append(detail.Points, point)
+		}
+	})
+	return detail, nil
+}
