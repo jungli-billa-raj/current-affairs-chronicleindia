@@ -51,7 +51,7 @@ func initialModel(month string, year int) model {
 	}
 	l := list.New(items, list.NewDefaultDelegate(), 0, 0)
 	l.Title = "Current Affairs"
-
+	l.DisableQuitKeybindings()
 	vp := viewport.New(0, 0)
 	vp.SetContent("Loading Article.....")
 
