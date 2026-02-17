@@ -1,4 +1,3 @@
----
 
 # 📚 Current Affairs TUI
 
