@@ -87,6 +87,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				cachedText, exists := cache[selectedItem.id]
 				if exists {
 					m.viewport.SetContent(cachedText)
+					return m, nil
 				}
 				// cache doesn't exist. So we'll save it in the end
 				articleText, err := scrapeArticleDetails(selectedItem.url)
