@@ -48,7 +48,6 @@ func initialModel(month string, year int) model {
 	}
 	l := list.New(items, list.NewDefaultDelegate(), 0, 0)
 	l.Title = "Current Affairs"
-	l.DisableQuitKeybindings()
 
 	vp := viewport.New(0, 0)
 	vp.SetContent("Loading Article.....")
@@ -79,6 +78,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.view = articleView
 				m.viewport.SetContent("Article Text here:")
 			}
+			return m, nil
 		}
 	case tea.WindowSizeMsg:
 		m.list.SetSize(msg.Width, msg.Height)
