@@ -6,6 +6,7 @@ A minimal, beautiful Terminal User Interface (TUI) application built with **Go +
 Built for speed, simplicity, and a clean reading experience.
 
 NOTE: "enter" key functionality has not been added yet to view the article. Working on it
+---
 
 ## ✨ Features
 
@@ -31,7 +32,8 @@ NOTE: "enter" key functionality has not been added yet to view the article. Work
 Make sure you have Go installed (1.20+ recommended).
 
 ```bash
-git clone https://github.com/jungli-billa-raj/current-affairs-chronicleindiacd current-affairs
+git clone https://github.com/jungli-billa-raj/current-affairs-chronicleindia
+cd current-affairs
 go mod tidy
 go build -o current-affairs
 ```
