@@ -18,6 +18,7 @@ type model struct {
 type article struct {
 	url      string
 	headline string
+	id       int
 }
 
 type view int
@@ -31,13 +32,15 @@ const (
 type item struct {
 	title string
 	url   string
+	id    int
 }
 
 func (i item) Title() string       { return i.title }
 func (i item) Description() string { return "" }
 func (i item) FilterValue() string { return i.title }
 
-//
+// Cache
+var cache = make(map[int]string)
 
 func initialModel(month string, year int) model {
 	articles, err := scrapeArticlePage(month, year)
@@ -47,7 +50,7 @@ func initialModel(month string, year int) model {
 
 	items := make([]list.Item, 0, len(articles))
 	for _, a := range articles {
-		items = append(items, item{title: a.headline, url: a.url})
+		items = append(items, item{title: a.headline, url: a.url, id: a.id})
 	}
 	l := list.New(items, list.NewDefaultDelegate(), 0, 0)
 	l.Title = "Current Affairs"
@@ -69,7 +72,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "ctrl+c", "q":
+		case "ctrl+c":
 			return m, tea.Quit
 		case "esc":
 			if m.view == articleView {
@@ -78,14 +81,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		case "enter":
 			if m.view == listView {
+				m.view = articleView
 				selectedItem := m.list.SelectedItem().(item)
+				// if article exists in cache Set Content
+				cachedText, exists := cache[selectedItem.id]
+				if exists {
+					m.viewport.SetContent(cachedText)
+				}
+				// cache doesn't exist. So we'll save it in the end
 				articleText, err := scrapeArticleDetails(selectedItem.url)
 				if err != nil {
 					log.Print(err)
 					return m, nil
 				}
-				m.view = articleView
-				m.viewport.SetContent(render(articleText))
+				renderedText := render(articleText)
+				m.viewport.SetContent(renderedText)
+				cache[selectedItem.id] = renderedText
 			}
 			return m, nil
 		}

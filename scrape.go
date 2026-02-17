@@ -34,6 +34,7 @@ func scrapeArticlePage(month string, year int) ([]article, error) {
 
 	articles := []article{}
 
+	idCounter := 0
 	doc.Find("h2.heading > a").Each(func(i int, s *goquery.Selection) {
 		text := strings.TrimSpace(s.Text())
 		href, _ := s.Attr("href")
@@ -41,7 +42,9 @@ func scrapeArticlePage(month string, year int) ([]article, error) {
 		articles = append(articles, article{
 			url:      "https://www.chronicleindia.in" + href,
 			headline: text,
+			id:       idCounter,
 		})
+		idCounter++
 	})
 	// Rule to remember
 	// Classes over structure. Always.
