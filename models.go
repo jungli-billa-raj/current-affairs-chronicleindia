@@ -28,11 +28,14 @@ const (
 )
 
 // This is required because bubbles/list expects items implementing list.Item.
-type item string
+type item struct {
+	title string
+	url   string
+}
 
-func (i item) Title() string       { return string(i) }
+func (i item) Title() string       { return i.title }
 func (i item) Description() string { return "" }
-func (i item) FilterValue() string { return string(i) }
+func (i item) FilterValue() string { return i.title }
 
 //
 
@@ -44,7 +47,7 @@ func initialModel(month string, year int) model {
 
 	items := make([]list.Item, 0, len(articles))
 	for _, a := range articles {
-		items = append(items, item(a.headline))
+		items = append(items, item{title: a.headline, url: a.url})
 	}
 	l := list.New(items, list.NewDefaultDelegate(), 0, 0)
 	l.Title = "Current Affairs"
@@ -75,8 +78,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		case "enter":
 			if m.view == listView {
+				selectedItem := m.list.SelectedItem().(item)
+				articleText, err := scrapeArticleDetails(selectedItem.url)
+				if err != nil {
+					log.Print(err)
+					return m, nil
+				}
 				m.view = articleView
-				m.viewport.SetContent("Article Text here:")
+				m.viewport.SetContent(render(articleText))
 			}
 			return m, nil
 		}

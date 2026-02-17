@@ -90,3 +90,14 @@ func scrapeArticleDetails(url string) (articleDetail, error) {
 	})
 	return detail, nil
 }
+
+func render(rawText articleDetail) string {
+	var builder strings.Builder
+
+	builder.WriteString(rawText.Title + "\n\n")
+	builder.WriteString(rawText.Intro + "\n")
+	for _, s := range rawText.Points {
+		builder.WriteString("		🔹 " + s + "\n")
+	}
+	return builder.String()
+}
